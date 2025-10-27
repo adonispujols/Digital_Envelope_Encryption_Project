@@ -24,7 +24,7 @@ import argparse, sys, os
 
 DEFAULT_KEYPAIR_NAME = 'my_rsa_key'
 
-def makeArgParser():
+def make_arg_parser():
 	parser = argparse.ArgumentParser(
 		description='Generate keypairs, encrypt and decrypt messages'
 	)
@@ -74,8 +74,8 @@ def makeArgParser():
 	return parser
 
 def main():
-	cmdParser = makeArgParser()
-	args = cmdParser.parse_args()
+	cmd_parser = make_arg_parser()
+	args = cmd_parser.parse_args()
 	# print(args)
 	if args.generate_keypair:
 		if args.new_keypair_name is None:
