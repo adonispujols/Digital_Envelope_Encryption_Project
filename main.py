@@ -86,7 +86,7 @@ def validate_args(args):
 			sys.exit(1)
 		print('Generate a keypair.')
 		print(f"New keypair name: {args.new_keypair_name}")
-	elif args.encrypt:
+	elif args.encrypt or args.decrypt:
 		if args.message is None:
 			print('Missing argument: -m MESSAGE (or --message MESSAGE)')
 			print('Where MESSAGE is the file name of your message.')
@@ -108,18 +108,21 @@ def validate_args(args):
 		if not is_a_normal_file(args.private_key[0]):
 			print(f"Error: {args.private_key[0]} either cannot be found or is not a normal file.")
 			sys.exit(1)
-		print('Encrypt a message.')
+		print(f"{'Encrypt' if args.encrypt else 'Decrypt'} a message.")
 		print(f"Message file name: {args.message[0]}")
 		print(f"Public key file name: {args.public_key}")
 		print(f"Private key file name: {args.private_key}")
-	elif args.decrypt:
-		if args.message is None:
-			print('Missing argument: -m MESSAGE (or --message MESSAGE)')
-			print('Where MESSAGE is the file name of your message.')
-			sys.exit(1)
-		print('Decrypt a message.')
-		print(f"Message file name: {args.message[0]}")
+	# elif args.decrypt:
+	# 	if args.message is None:
+	# 		print('Missing argument: -m MESSAGE (or --message MESSAGE)')
+	# 		print('Where MESSAGE is the file name of your message.')
+	# 		sys.exit(1)
+	# 	# print('Decrypt a message.')
+	# 	print(f"Message file name: {args.message[0]}")
+	# 	print(f"Public key file name: {args.public_key}")
+	# 	print(f"Private key file name: {args.private_key}")
 	else:
+		print("No option was selected. Exiting...")
 		sys.exit(1)
 
 def main():
