@@ -20,8 +20,7 @@
 # main.py -d -m message_file -p some_public_key -r some_private_key
 # If keypair_name is omitted, use a default name
 
-import argparse
-import sys
+import argparse, sys, os
 
 DEFAULT_KEYPAIR_NAME = 'my_rsa_key'
 
@@ -77,7 +76,7 @@ def makeArgParser():
 def main():
 	cmdParser = makeArgParser()
 	args = cmdParser.parse_args()
-#	print(args)
+	# print(args)
 	if args.generate_keypair:
 		if args.new_keypair_name is None:
 			print("When using the option '-n' or '--new-keypair-name', you must specify a name for your key file.")
@@ -89,8 +88,30 @@ def main():
 			print('Missing argument: -m MESSAGE (or --message MESSAGE)')
 			print('Where MESSAGE is the file name of your message.')
 			sys.exit(1)
+		if args.public_key is None:
+			print('Missing argument: -p PUBLIC_KEY (or --public-key PUBLIC_KEY)')
+			print('Where PUBLIC_KEY is your public key file.')
+			sys.exit(1)
+		if args.private_key is None:
+			print('Missing argument: -r PRIVATE_KEY (or --private-key PRIVATE_KEY)')
+			print('Where PRIVATE_KEY is your private key file.')
+			sys.exit(1)
 		print('Encrypt a message.')
 		print(f"Message file name: {args.message[0]}")
+		# Check if the file path exists
+		if not os.path.exists(args.message[0]):
+			print(f"Error: {args.message[0]} not found.")
+			sys.exit(1)
+		# Make sure it's a file and not something else like a directory
+		if not os.path.isfile(args.message[0]):
+			print(f"Error: {args.message[0]} is not a file.")
+			sys.exit(1)
+		# Open the file and read its contents
+		print(f"Opening {args.message[0]} ...")
+		with open(args.message[0]) as message_file:
+			message_contents = message_file.read()
+		print(f"Contents of {args.message[0]}:")
+		print(message_contents)
 	elif args.decrypt:
 		if args.message is None:
 			print('Missing argument: -m MESSAGE (or --message MESSAGE)')
