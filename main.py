@@ -10,12 +10,12 @@
 
 # Parameters:
 # -m, --message
-# -k, --keypair-name
+# -n, --new-keypair-name
 # -p, --public-key
 # -r, --private-key
 
 # Command line usage (with short command names):
-# main.py -g [-k keypair_name]
+# main.py -g [-n keypair_name]
 # main.py -e -m message_file -p some_public_key -r some_private_key
 # main.py -d -m message_file -p some_public_key -r some_private_key
 # If keypair_name is omitted, use a default name
@@ -48,8 +48,8 @@ def makeArgParser():
 		help='Used to specify you want to decrypt a message.'
 	)
 	parser.add_argument(
-		'-k',
-		'--keypair-name',
+		'-n',
+		'--new-keypair-name',
 		nargs='?',
 		default=DEFAULT_KEYPAIR_NAME,
 		help=f"The name of your keypair files. Defaults to {DEFAULT_KEYPAIR_NAME}."
@@ -77,7 +77,23 @@ def makeArgParser():
 def main():
 	cmdParser = makeArgParser()
 	args = cmdParser.parse_args()
-	print(args)
+#	print(args)
+	if args.generate_keypair:
+		if args.new_keypair_name is None:
+			print("When using the option '-n' or '--new-keypair-name', you must specify a name for your key file.")
+			sys.exit(1)
+		print('Generate a keypair.')
+		print(f"New keypair name: {args.new_keypair_name}")
+		pass
+	elif args.encrypt:
+		print('Encrypt a message.')
+		pass
+	elif args.decrypt:
+		print('Decrypt a message.')
+		pass
+	else:
+		sys.exit(1)
+		pass
 
 if __name__ == "__main__":
 	main()
