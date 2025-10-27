@@ -84,13 +84,20 @@ def main():
 			sys.exit(1)
 		print('Generate a keypair.')
 		print(f"New keypair name: {args.new_keypair_name}")
-		pass
 	elif args.encrypt:
+		if args.message is None:
+			print('Missing argument: -m MESSAGE (or --message MESSAGE)')
+			print('Where MESSAGE is the file name of your message.')
+			sys.exit(1)
 		print('Encrypt a message.')
-		pass
+		print(f"Message file name: {args.message[0]}")
 	elif args.decrypt:
+		if args.message is None:
+			print('Missing argument: -m MESSAGE (or --message MESSAGE)')
+			print('Where MESSAGE is the file name of your message.')
+			sys.exit(1)
 		print('Decrypt a message.')
-		pass
+		print(f"Message file name: {args.message[0]}")
 	else:
 		sys.exit(1)
 		pass
