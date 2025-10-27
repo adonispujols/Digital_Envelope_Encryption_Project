@@ -84,8 +84,6 @@ def validate_args(args, parser):
 		if args.new_keypair_name is None:
 			print("When using the option '-n' or '--new-keypair-name', you must specify a name for your key file.")
 			sys.exit(1)
-		print('Generate a keypair.')
-		print(f"New keypair name: {args.new_keypair_name}")
 	elif args.encrypt or args.decrypt:
 		if args.message is None:
 			print('Missing argument: -m MESSAGE (or --message MESSAGE)')
@@ -122,6 +120,20 @@ def main():
 	args = cmd_parser.parse_args()
 	# print(args)
 	validate_args(args, cmd_parser)
+	if args.generate_keypair:
+		print('Generating a new keypair...')
+		print(f"New keypair name: {args.new_keypair_name}")
+	elif args.encrypt:
+		print('Encrypting message...')
+		print(f"Resulting ciphertext: {args.message[0]}.ciphertext")
+		pass
+	elif args.decrypt:
+		print('Decrypting message...')
+		print(f"Resulting plaintext: {args.message[0]}.plaintext")
+		pass
+	else:
+		print("Some strange error occured...")
+		sys.exit(1)
 
 if __name__ == "__main__":
 	main()
