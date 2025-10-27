@@ -10,23 +10,18 @@
 
 # Parameters:
 # -m, --message
+# -k, --keypair-name
 # -p, --public-key
 # -r, --private-key
 
-# Command line usage (with long command names):
-# main.py --generate-keypair [keypair_name]
-# main.py --encrypt --message message_file --public-key some_public_key --private-key some_private_key
-# main.py --decrypt --message message_file --public-key some_public_key --private-key some_private_key
-# If keypair_name is omitted, use a default name
-
 # Command line usage (with short command names):
-# main.py -g [keypair_name]
+# main.py -g [-k keypair_name]
 # main.py -e -m message_file -p some_public_key -r some_private_key
 # main.py -d -m message_file -p some_public_key -r some_private_key
 # If keypair_name is omitted, use a default name
 
-import sys
 import argparse
+import sys
 
 DEFAULT_KEYPAIR_NAME = 'my_rsa_key'
 
@@ -37,9 +32,8 @@ def makeArgParser():
 	parser.add_argument(
 		'-g', 
 		'--generate-keypair', 
-		default=DEFAULT_KEYPAIR_NAME , 
-		nargs='?',
-		help=f"The name of your RSA key file. Defaults to '{DEFAULT_KEYPAIR_NAME}'."
+		action='store_true',
+		help="Used to specify you want to generate a keypair (public and private key)."
 	)
 	parser.add_argument(
 		'-e',
@@ -52,6 +46,13 @@ def makeArgParser():
 		'--decrypt',
 		action='store_true',
 		help='Used to specify you want to decrypt a message.'
+	)
+	parser.add_argument(
+		'-k',
+		'--keypair-name',
+		nargs='?',
+		default=DEFAULT_KEYPAIR_NAME,
+		help=f"The name of your keypair files. Defaults to {DEFAULT_KEYPAIR_NAME}."
 	)
 	parser.add_argument(
 		'-m',
@@ -75,7 +76,8 @@ def makeArgParser():
 
 def main():
 	cmdParser = makeArgParser()
-	cmdParser.print_help()
+	args = cmdParser.parse_args()
+	print(args)
 
 if __name__ == "__main__":
 	main()
