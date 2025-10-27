@@ -7,6 +7,10 @@
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
 
+# ============================================================================
+# RSA FUNCTIONS 
+# ============================================================================
+
 
 def generate_key_pair():
     """Generate an RSA private/public key pair"""
@@ -97,7 +101,7 @@ def verify_signature(public_key, signature, message):
 
 
 # ============================================================================
-# AES FUNCTIONS (TO BE IMPLEMENTED BY GROUPMATES)
+# AES FUNCTIONS 
 # ============================================================================
 
 def generate_aes_key():
