@@ -78,7 +78,7 @@ def is_a_normal_file(file_path):
 	''' For command line options that expect an argument, check if the argument actually exists and if it's a normal file. '''
 	return os.path.exists(file_path) and os.path.isfile(file_path)
 
-def validate_args(args):
+def validate_args(args, parser):
 	''' Used to check if the user's options make sense, and if the files they passed actually exist. '''
 	if args.generate_keypair:
 		if args.new_keypair_name is None:
@@ -112,24 +112,16 @@ def validate_args(args):
 		print(f"Message file name: {args.message[0]}")
 		print(f"Public key file name: {args.public_key}")
 		print(f"Private key file name: {args.private_key}")
-	# elif args.decrypt:
-	# 	if args.message is None:
-	# 		print('Missing argument: -m MESSAGE (or --message MESSAGE)')
-	# 		print('Where MESSAGE is the file name of your message.')
-	# 		sys.exit(1)
-	# 	# print('Decrypt a message.')
-	# 	print(f"Message file name: {args.message[0]}")
-	# 	print(f"Public key file name: {args.public_key}")
-	# 	print(f"Private key file name: {args.private_key}")
 	else:
-		print("No option was selected. Exiting...")
+		print("No options specified. Here's some help:")
+		parser.print_help()
 		sys.exit(1)
 
 def main():
 	cmd_parser = make_arg_parser()
 	args = cmd_parser.parse_args()
-	print(args)
-	validate_args(args)
+	# print(args)
+	validate_args(args, cmd_parser)
 
 if __name__ == "__main__":
 	main()
