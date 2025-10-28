@@ -21,6 +21,7 @@
 # If keypair_name is omitted, use a default name
 
 import argparse, sys, os
+from crypto_functions import *
 
 DEFAULT_KEYPAIR_NAME = 'my_rsa_key'
 
@@ -122,7 +123,24 @@ def main():
 	validate_args(args, cmd_parser)
 	if args.generate_keypair:
 		print('Generating a new keypair...')
-		print(f"New keypair name: {args.new_keypair_name}")
+		try:
+			# Generate new public and private keys
+			private_key, public_key = generate_key_pair()
+			private_key_pem = serialize_private_key(private_key)
+			public_key_pem = serialize_public_key(public_key)
+			# Write them to files
+			public_key_filename = f"{args.new_keypair_name}.pub"
+			private_key_filename = f"{args.new_keypair_name}"
+			with open(public_key_filename, "w") as public_key_file:
+				public_key_file.write(public_key_pem.decode())
+			with open(private_key_filename, "w") as private_key_file:
+				private_key_file.write(private_key_pem.decode())
+		except:
+			print("Error occured while creating public/private keypair.")
+			sys.exit(1)
+		print('Done. Here\'s your new keys:')
+		print(f"New public key name: {public_key_filename}")
+		print(f"New private key name: {private_key_filename}")
 	elif args.encrypt:
 		print('Encrypting message...')
 		print(f"Resulting ciphertext: {args.message[0]}.ciphertext")
