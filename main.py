@@ -107,10 +107,6 @@ def validate_args(args, parser):
 		if not is_a_normal_file(args.private_key[0]):
 			print(f"Error: {args.private_key[0]} either cannot be found or is not a normal file.")
 			sys.exit(1)
-		print(f"{'Encrypt' if args.encrypt else 'Decrypt'} a message.")
-		print(f"Message file name: {args.message[0]}")
-		print(f"Public key file name: {args.public_key}")
-		print(f"Private key file name: {args.private_key}")
 	else:
 		print("No options specified. Here's some help:")
 		parser.print_help()
@@ -138,16 +134,26 @@ def main():
 		except:
 			print("Error occured while creating public/private keypair.")
 			sys.exit(1)
-		print('Done. Here\'s your new keys:')
+		print("Done. Here's your new keys:")
 		print(f"New public key name: {public_key_filename}")
 		print(f"New private key name: {private_key_filename}")
 	elif args.encrypt:
 		print('Encrypting message...')
-		print(f"Resulting ciphertext: {args.message[0]}.ciphertext")
+		#=================================================
+		# Requires AES encryption to be done by groupmates
+		#=================================================
+		ciphertext_filename = f"{args.message[0]}.ciphertext"
+		print("Done. Here's your ciphertext:")
+		print(f"Resulting ciphertext: {ciphertext_filename}")
 		pass
 	elif args.decrypt:
 		print('Decrypting message...')
-		print(f"Resulting plaintext: {args.message[0]}.plaintext")
+		#=================================================
+		# Requires AES decryption to be done by groupmates
+		#=================================================
+		plaintext_filename = f"{args.message[0]}.plaintext"
+		print("Done. Here's your plaintext:")
+		print(f"Resulting plaintext: {plaintext_filename}")
 		pass
 	else:
 		print("Some strange error occured...")
