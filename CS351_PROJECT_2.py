@@ -4,9 +4,10 @@
 # Group A Members: Bassil Saleh, Ethan Bunagan, Adonis Pujols, Amulya Prasad, Jonathan Metry
 
 
+import os
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
-
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 # ============================================================================
 # RSA FUNCTIONS 
 # ============================================================================
@@ -104,28 +105,50 @@ def verify_signature(public_key, signature, message):
 # AES FUNCTIONS 
 # ============================================================================
 
-def generate_aes_key():
+def generate_aes_key(bit_length=256):
     """
-    TODO:Implement AES key generation. Generate a random AES secret key, then return it in bytes form
+    Generate an AES key for AES-GCM
+    Returns: key bytes (32 bytes for 256-bits)
     """
-    # Placeholder
-    return b"This is a 32-byte secret key!!"
-
+    if bit_length not in (128, 192, 256):
+        raise ValueError("bit length must be one of 128, 192, 256")
+    return AESGCM.generate_key(bit_length=bit_length)
 
 def encrypt_message_aes(message, aes_key):
     """
-    TODO: Encrypt a message using AES encryption, return it in bytes
+    Encrypt a message (bytes) using AES-GCM
+    Returns: bytes = nonce (12) || ciphertext (contains tag)
     """
-    # Placeholder
-    return b"[AES_ENCRYPTED_MESSAGE_PLACEHOLDER]"
-
+    if not isinstance(message, (bytes, bytearray)):
+        raise TypeError("message must be bytes")
+    if not isinstance(aes_key, (bytes, bytearray)):
+        raise TypeError("aes_key must be bytes")
+    
+    aesgcm = AESGCM(aes_key)
+    #12-byte nonce
+    nonce = os.urandom(12)
+    ciphertext = aesgcm.encrypt(nonce, message, associated_data=None)
+    return nonce + ciphertext
 
 def decrypt_message_aes(encrypted_message, aes_key):
     """
-    TODO: Decrypt a message using AES decryption, return in bytes
+    Decrypt bytes produced by encrypt_message_aes.
+    encrypted_message = nonce (12) || ciphertext_with_tag
+    Returns: plaintext bytes
     """
-    # Placeholder
-    return b"I loveeee apples"
+    if not isinstance(encrypted_message, (bytes, bytearray)):
+        raise TypeError("encrypted_message must by bytes")
+    if not isinstance(aes_key, (bytes, bytearray)):
+        raise TypeError("aes_key must be bytes")
+    
+    if len(encrypted_message) < 13:
+        raise ValueError("encrypted data is too short to contain a nonce + tag")
+    
+    nonce = encrypted_message[:12]
+    ciphertext = encrypted_message[12:]
+    aesgcm = AESGCM(aes_key)
+    plaintext = aesgcm.decrypt(nonce, ciphertext, associated_data=None)
+    return plaintext
 
 
 # ============================================================================
