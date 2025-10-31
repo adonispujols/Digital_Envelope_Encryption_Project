@@ -37,6 +37,16 @@ def serialize_public_key(public_key):
     )
     return public_pem
 
+def deserialize_public_key(public_key_bytes):
+    """Convert public key in PEM format back into its original type."""
+    public_key = serialization.load_pem_public_key(public_key_bytes)
+    return public_key
+
+def deserialize_private_key(private_key_bytes):
+    """Convert private key in PEM format back into its original type."""
+    private_key = serialization.load_pem_private_key(private_key_bytes, password=None)
+    return private_key
+
 def encrypt_with_public_key(public_key, data):
     """Encrypt data using RSA public key (for encrypting AES key)"""
     ciphertext = public_key.encrypt(
