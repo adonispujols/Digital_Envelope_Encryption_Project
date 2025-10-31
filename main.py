@@ -235,39 +235,85 @@ def main():
 		#=================================================
 		# Requires AES decryption to be done by groupmates
 		#=================================================
-		# try:
-		# 	print('Reading ciphertext...')
-		# 	with open(args.message[0], 'wb') as file:
-		# 		ciphertext = file.read()
-		# except:
-		# 	print('Error reading ciphertext.')
-		# 	sys.exit(1)
-		# try:
-		# 	print('Reading AES key...')
-		# 	with open(args.symmetric_key[0], 'wb') as file:
-		# 		symmetric_key_bytes = file.read()
-		# except:
-		# 	print('Error reading AES key.')
-		# 	sys.exit(1)
-		# try:
-		# 	print('Reading public key...')
-		# 	with open(args.public_key[0], 'wb') as file:
-		# 		public_key_bytes = file.read()
-		# except:
-		# 	print('Error reading public key.')
-		# 	sys.exit(1)
-		# try:
-		# 	print('Reading private key...')
-		# 	with open(args.private_key[0], 'wb') as file:
-		# 		private_key_bytes = file.read()
-		# except:
-		# 	print('Error reading private key.')
-		# 	sys.exit(1)
-		# try:
-		# 	print('Reading signature...')
-		# except:
-		# 	sys.exit(1)
+		try:
+			print('Reading ciphertext...')
+			with open(args.message[0], 'rb') as file:
+				ciphertext = file.read()
+		except:
+			print(e)
+			print('Error reading ciphertext.')
+			sys.exit(1)
+		try:
+			print('Reading AES key...')
+			with open(args.symmetric_key[0], 'rb') as file:
+				symmetric_key_bytes = file.read()
+		except:
+			print('Error reading AES key.')
+			sys.exit(1)
+		try:
+			print('Reading public key...')
+			with open(args.public_key[0], 'rb') as file:
+				public_key_bytes = file.read()
+		except:
+			print('Error reading public key.')
+			sys.exit(1)
+		try:
+			print('Reading private key...')
+			with open(args.private_key[0], 'rb') as file:
+				private_key_bytes = file.read()
+		except:
+			print('Error reading private key.')
+			sys.exit(1)
+		try:
+			print('Reading signature...')
+			with open(args.signature[0], 'rb') as file:
+				signature_bytes = file.read()
+		except:
+			print('Error reading signature.')
+			sys.exit(1)
+		# Convert public & private keys from PEM to native type
+		try:
+			print('Converting public/private keys out of PEM format...')
+			public_key = deserialize_public_key(public_key_bytes)
+			private_key = deserialize_private_key(private_key_bytes)
+		except:
+			print('Error converting public/private keys.')
+			sys.exit(1)
+		# Decrypt the symmetric key
+		try:
+			print('Decrypting symmetric key...')
+			symmetric_key = decrypt_with_private_key(private_key, symmetric_key_bytes)
+		except:
+			print('Error occured while decrypting symmetric key.')
+			sys.exit(1)
+		# Use the symmetric key to decrypt the ciphertext
+		try:
+			print('Decrypting message...')
+			plaintext = decrypt_message_aes(ciphertext, symmetric_key)
+		except Exception as e:
+			print(e)
+			print('Error occured while decrypting message.')
+			sys.exit(1)
+		# Verify the signature
+		try:
+			print('Verifying signature...')
+			verify = verify_signature(public_key, signature_bytes, plaintext)
+			if not verify:
+				print('********** WARNING: **********')
+				print('Signature verification failed!')
+				print('******************************')
+		except Exception as e:
+			print(e)
+			print('Error occured while verifying signature.')
+			sys.exit(1)
 		plaintext_filename = f"{args.message[0]}.plaintext"
+		try:
+			print('Saving plaintext...')
+			with open(plaintext_filename, 'wb') as file:
+				file.write(plaintext)
+		except:
+			print('Error occured while saving plaintext.')
+			sys.exit(1)
 		print("Done. Here's your plaintext:")
 		print(f"Resulting plaintext: {plaintext_filename}")
 		pass
