@@ -142,10 +142,10 @@ def main():
 			# Write them to files
 			public_key_filename = f"{args.new_keypair_name}.pub"
 			private_key_filename = f"{args.new_keypair_name}"
-			with open(public_key_filename, "w") as public_key_file:
-				public_key_file.write(public_key_pem.decode())
-			with open(private_key_filename, "w") as private_key_file:
-				private_key_file.write(private_key_pem.decode())
+			with open(public_key_filename, "wb") as public_key_file:
+				public_key_file.write(public_key_pem)
+			with open(private_key_filename, "wb") as private_key_file:
+				private_key_file.write(private_key_pem)
 		except:
 			print("Error occured while creating public/private keypair.")
 			sys.exit(1)
@@ -157,10 +157,65 @@ def main():
 		#=================================================
 		# Requires AES encryption to be done by groupmates
 		#=================================================
+		try:
+			print('Reading message...')
+			with open(args.message[0], 'rb') as message_file:
+				message_bytes = message_file.read()
+			print('Reading public & private keys...')
+			with open(args.public_key[0], 'rb') as public_key_file:
+				public_key_bytes = public_key_file.read()
+			with open(args.private_key[0], 'rb') as private_key_file:
+				private_key_bytes = private_key_file.read()
+		except:
+			print("Error occured while opening/reading supplied files.")
+			sys.exit(1)
+		try:
+			print('Converting public/private keys out of PEM format...')
+			public_key = deserialize_public_key(public_key_bytes)
+			private_key = deserialize_private_key(private_key_bytes)
+		except Exception as e:
+			print(e)
+			print("Error occured while converting public/private keys.")
+			sys.exit(1)
+		try:
+			print('Generating new symmetric key...')
+			symmetric_key = generate_aes_key()
+		except:
+			print("Error occured while generating symmetric key.")
+			sys.exit(1)
+		# Encrypt the message using the symmetric key
+		try:
+			print('Encrypting message...')
+			ciphertext = encrypt_message_aes(message_bytes, symmetric_key)
+		except:
+			print("Error occured while encrypting message.")
+			sys.exit(1)
+		# Encrypt the symmetric key with the public key
+		try:
+			print('Encrypting symmetric key...')
+			encrypted_key = encrypt_with_public_key(public_key, symmetric_key)
+		except:
+			print("Error occured while encrypting symmetric key.")
+			sys.exit(1)
+		# Sign the plaintext message using the private key
+		try:
+			signature = sign_message(private_key, message_bytes)
+		except:
+			print("Error occured while creating digital signature.")
+			sys.exit(1)
 		ciphertext_filename = f"{args.message[0]}.ciphertext"
-		print("Done. Here's your ciphertext:")
+		encrypted_key_filename = f"{args.message[0]}.aes"
+		signature_filename = f"{args.private_key[0]}.signature"
+		with open(ciphertext_filename, 'wb') as ciphertext_file:
+			ciphertext_file.write(ciphertext)
+		with open(encrypted_key_filename, 'wb') as encrypted_key_file:
+			encrypted_key_file.write(encrypted_key)
+		with open(signature_filename, 'wb') as signature_file:
+			signature_file.write(signature)
+		print("Done. Here's your ciphertext, encrypted key, and signature:")
 		print(f"Resulting ciphertext: {ciphertext_filename}")
-		pass
+		print(f"Encrypted key: {encrypted_key_filename}")
+		print(f"Signature file: {signature_filename}")
 	elif args.decrypt:
 		print('Decrypting message...')
 		#=================================================
