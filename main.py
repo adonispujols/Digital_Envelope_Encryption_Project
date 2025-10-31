@@ -13,11 +13,12 @@
 # -n, --new-keypair-name
 # -p, --public-key
 # -r, --private-key
+# -s, --symmetric-key (the symmetric key used for encryption/decryption)
 
 # Command line usage (with short command names):
 # main.py -g [-n keypair_name]
 # main.py -e -m message_file -p some_public_key -r some_private_key
-# main.py -d -m message_file -p some_public_key -r some_private_key
+# main.py -d -m message_file -p some_public_key -r some_private_key -s symmetric_key
 # If keypair_name is omitted, use a default name
 
 import argparse, sys, os
@@ -73,6 +74,12 @@ def make_arg_parser():
 		nargs=1,
 		help='The filename of your private key.'
 	)
+	parser.add_argument(
+		'-s',
+		'--symmetric-key',
+		nargs=1,
+		help='The filename of the symmetric key used to decrypt your message.'
+	)
 	return parser
 
 def is_a_normal_file(file_path):
@@ -98,6 +105,11 @@ def validate_args(args, parser):
 			print('Missing argument: -r PRIVATE_KEY (or --private-key PRIVATE_KEY)')
 			print('Where PRIVATE_KEY is your private key file.')
 			sys.exit(1)
+		if args.decrypt and args.symmetric_key is None:
+			print('Missing argument: -s SYMMETRIC_KEY (or --symmetric-key SYMMETRIC_KEY)')
+			print('Where SYMMETRIC_KEY is your symmetric key file')
+			print('(the key used to encrypt/decrypt your message).')
+			sys.exit(1)
 		if not is_a_normal_file(args.message[0]):
 			print(f"Error: {args.message[0]} either cannot be found or is not a normal file.")
 			sys.exit(1)
@@ -106,6 +118,9 @@ def validate_args(args, parser):
 			sys.exit(1)
 		if not is_a_normal_file(args.private_key[0]):
 			print(f"Error: {args.private_key[0]} either cannot be found or is not a normal file.")
+			sys.exit(1)
+		if args.decrypt and args.symmetric_key and not is_a_normal_file(args.symmetric_key[0]):
+			print(f"Error: {args.symmetric_key[0]} either cannot be found or is not a normal file.")
 			sys.exit(1)
 	else:
 		print("No options specified. Here's some help:")
