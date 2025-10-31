@@ -14,11 +14,12 @@
 # -p, --public-key
 # -r, --private-key
 # -s, --symmetric-key (the symmetric key used for encryption/decryption)
+# -i, --signature
 
 # Command line usage (with short command names):
 # main.py -g [-n keypair_name]
 # main.py -e -m message_file -p some_public_key -r some_private_key
-# main.py -d -m message_file -p some_public_key -r some_private_key -s symmetric_key
+# main.py -d -m message_file -p some_public_key -r some_private_key -s symmetric_key -i signature
 # If keypair_name is omitted, use a default name
 
 import argparse, sys, os
@@ -80,6 +81,12 @@ def make_arg_parser():
 		nargs=1,
 		help='The filename of the symmetric key used to decrypt your message.'
 	)
+	parser.add_argument(
+		'-i',
+		'--signature',
+		nargs=1,
+		help='The filename of the signature which the message was signed with.'
+	)
 	return parser
 
 def is_a_normal_file(file_path):
@@ -110,6 +117,10 @@ def validate_args(args, parser):
 			print('Where SYMMETRIC_KEY is your symmetric key file')
 			print('(the key used to encrypt/decrypt your message).')
 			sys.exit(1)
+		if args.decrypt and args.signature is None:
+			print('Missing argument: -i SIGNATURE (or --signature SIGNATURE)')
+			print('Where SIGNATURE is the signature file.')
+			sys.exit(1)
 		if not is_a_normal_file(args.message[0]):
 			print(f"Error: {args.message[0]} either cannot be found or is not a normal file.")
 			sys.exit(1)
@@ -121,6 +132,9 @@ def validate_args(args, parser):
 			sys.exit(1)
 		if args.decrypt and args.symmetric_key and not is_a_normal_file(args.symmetric_key[0]):
 			print(f"Error: {args.symmetric_key[0]} either cannot be found or is not a normal file.")
+			sys.exit(1)
+		if args.decrypt and args.signature and not is_a_normal_file(args.signature[0]):
+			print(f"Error: {args.signature[0]} either cannot be found or is not a normal file.")
 			sys.exit(1)
 	else:
 		print("No options specified. Here's some help:")
@@ -221,6 +235,38 @@ def main():
 		#=================================================
 		# Requires AES decryption to be done by groupmates
 		#=================================================
+		# try:
+		# 	print('Reading ciphertext...')
+		# 	with open(args.message[0], 'wb') as file:
+		# 		ciphertext = file.read()
+		# except:
+		# 	print('Error reading ciphertext.')
+		# 	sys.exit(1)
+		# try:
+		# 	print('Reading AES key...')
+		# 	with open(args.symmetric_key[0], 'wb') as file:
+		# 		symmetric_key_bytes = file.read()
+		# except:
+		# 	print('Error reading AES key.')
+		# 	sys.exit(1)
+		# try:
+		# 	print('Reading public key...')
+		# 	with open(args.public_key[0], 'wb') as file:
+		# 		public_key_bytes = file.read()
+		# except:
+		# 	print('Error reading public key.')
+		# 	sys.exit(1)
+		# try:
+		# 	print('Reading private key...')
+		# 	with open(args.private_key[0], 'wb') as file:
+		# 		private_key_bytes = file.read()
+		# except:
+		# 	print('Error reading private key.')
+		# 	sys.exit(1)
+		# try:
+		# 	print('Reading signature...')
+		# except:
+		# 	sys.exit(1)
 		plaintext_filename = f"{args.message[0]}.plaintext"
 		print("Done. Here's your plaintext:")
 		print(f"Resulting plaintext: {plaintext_filename}")
