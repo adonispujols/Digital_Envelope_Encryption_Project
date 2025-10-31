@@ -169,7 +169,7 @@ def main():
 	elif args.encrypt:
 		print('Encrypting message...')
 		#=================================================
-		# Requires AES encryption to be done by groupmates
+		# AES encryption
 		#=================================================
 		try:
 			print('Reading message...')
@@ -233,7 +233,7 @@ def main():
 	elif args.decrypt:
 		print('Decrypting message...')
 		#=================================================
-		# Requires AES decryption to be done by groupmates
+		# AES decryption 
 		#=================================================
 		try:
 			print('Reading ciphertext...')

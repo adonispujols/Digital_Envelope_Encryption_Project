@@ -100,29 +100,9 @@ def verify_signature(public_key, signature, message):
         return False
 
 # ============================================================================
-# AES FUNCTIONS (TO BE IMPLEMENTED BY GROUPMATES)
+# AES FUNCTIONS 
 # ============================================================================
 
-# def generate_aes_key():
-#     """
-#     TODO:Implement AES key generation. Generate a random AES secret key, then return it in bytes form
-#     """
-#     # Placeholder
-#     return b"This is a 32-byte secret key!!"
-
-# def encrypt_message_aes(message, aes_key):
-#     """
-#     TODO: Encrypt a message using AES encryption, return it in bytes
-#     """
-#     # Placeholder
-#     return b"[AES_ENCRYPTED_MESSAGE_PLACEHOLDER]"
-
-# def decrypt_message_aes(encrypted_message, aes_key):
-#     """
-#     TODO: Decrypt a message using AES decryption, return in bytes
-#     """
-#     # Placeholder
-#     return b"I loveeee apples"
 def generate_aes_key(bit_length=256):
     """
     Generate an AES key for AES-GCM
