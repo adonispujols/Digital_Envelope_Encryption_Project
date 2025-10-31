@@ -302,8 +302,7 @@ def main():
 				print('********** WARNING: **********')
 				print('Signature verification failed!')
 				print('******************************')
-		except Exception as e:
-			print(e)
+		except:
 			print('Error occured while verifying signature.')
 			sys.exit(1)
 		plaintext_filename = f"{args.message[0]}.plaintext"
